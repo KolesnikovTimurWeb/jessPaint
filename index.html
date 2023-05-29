@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+
+   <style>
+      body {
+         padding: 0;
+         margin: 0;
+         position: relative;
+      }
+
+      .box {
+         width: 15px;
+         height: 15px;
+         background: purple;
+         position: fixed;
+         left: 50%;
+         top: 50%;
+         transform: translate(-50%, -50%);
+         border-radius: 50%;
+      }
+
+      .clear {
+         position: fixed;
+         right: 0;
+         top: 0;
+         z-index: 99999;
+      }
+   </style>
+</head>
+
+<body>
+   <button class="clear">CLEAR</button>
+   <div class="box redBox"></div>
+</body>
+<script>
+   let paint = false;
+
+   const cloneDIV = e => {
+      e = (e == undefined) ? e.target : e;
+      let newDIV = document.createElement('div');
+      newDIV.classList.add('box');
+      newDIV.classList.add('cloneBox');
+      newDIV.style.left = `${e.offsetLeft}px`;
+      newDIV.style.top = `${e.offsetTop}px`;
+      newDIV.style.width = `${e.clientWidth}px`;
+      newDIV.style.height = `${e.clientHeight}px`;
+      document.body.appendChild(newDIV);
+   };
+
+   const redBox = document.querySelector('.redBox');
+
+   const descPaint = (el, action) => {
+      let e = (action === 'mobile') ? el.touches[0] : el;
+      let X = e.clientX;
+      let Y = e.clientY;
+      redBox.style.left = `${X}px`;
+      redBox.style.top = `${Y}px`;
+      if (paint) cloneDIV(document.querySelector('.redBox'));
+   };
+
+   document.onmousemove = e => descPaint(e, 'desctop');
+   document.ontouchmove = e => descPaint(e, 'mobile');
+   document.onclick = e => {
+      if (e.target.classList.contains('clear')) {
+         paint = false;
+         document.querySelectorAll('.cloneBox').forEach(el => {
+            el.remove();
+         });
+      } else {
+         paint = (paint) ? false : true;
+      }
+   };
+
+   document.onwheel = e => {
+      redBox.style.width = `${redBox.clientWidth - e.deltaY / 100}px`;
+      redBox.style.height = `${redBox.clientHeight - e.deltaY / 100}px`;
+   }
+</script>
+
+</html>
